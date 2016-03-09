@@ -11,7 +11,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new EsbAgent(null, "", 0, "");
+                var agent = new RabbitAgent(null, "", 0, "");
             });
         }
 
@@ -20,7 +20,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new EsbAgent("name", null, 0, "");
+                var agent = new RabbitAgent("name", null, 0, "");
             });
         }
 
@@ -29,21 +29,21 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new EsbAgent("name", "host", 0, null);
+                var agent = new RabbitAgent("name", "host", 0, null);
             });
         }
 
         [Test]
         public void Ctor_Version()
         {
-            var agent = new EsbAgent("name", "host", 0, "instance");
+            var agent = new RabbitAgent("name", "host", 0, "instance");
             Assert.IsNotNull(agent.Version);
         }
 
         [Test]
         public void Ctor_Guid()
         {
-            var agent = new EsbAgent("name", "host", 0, "instance");
+            var agent = new RabbitAgent("name", "host", 0, "instance");
             Assert.IsNotNull(agent.Guid);
             Assert.IsTrue(agent.Guid == "com.203sol.newrelic.neuronesb");
         }
@@ -51,7 +51,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         [Test]
         public void Ctor_Name()
         {
-            var agent = new EsbAgent("name", "host", 0, "instance");
+            var agent = new RabbitAgent("name", "host", 0, "instance");
             Assert.IsNotNull(agent.GetAgentName());
             Assert.IsTrue(agent.GetAgentName() == "name");
         }

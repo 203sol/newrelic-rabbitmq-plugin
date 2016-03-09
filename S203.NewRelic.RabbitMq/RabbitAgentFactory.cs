@@ -4,7 +4,7 @@ using NewRelic.Platform.Sdk.Utils;
 
 namespace S203.NewRelic.RabbitMq
 {
-    public class EsbAgentFactory : AgentFactory
+    public class RabbitAgentFactory : AgentFactory
     {
         private static readonly Logger Logger = Logger.GetLogger("NeuronEsbLogger");
 
@@ -14,10 +14,12 @@ namespace S203.NewRelic.RabbitMq
 
             var name = (string)properties["name"];
             var host = (string)properties["host"];
+            var vhost = (string)properties["vhost"];
             var port = int.Parse(properties["port"].ToString());
-            var instance = (string)properties["instance"];
+            var username = (string)properties["username"];
+            var password = (string)properties["password"];
 
-            return new EsbAgent(name, host, port, instance);
+            return new RabbitAgent(name, host, vhost, port, username, password);
         }
     }
 }

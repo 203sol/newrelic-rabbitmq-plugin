@@ -57,8 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EndpointHealth.cs" />
-    <Compile Include="EsbAgent.cs" />
-    <Compile Include="EsbAgentFactory.cs" />
+    <Compile Include="RabbitAgent.cs" />
+    <Compile Include="RabbitAgentFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

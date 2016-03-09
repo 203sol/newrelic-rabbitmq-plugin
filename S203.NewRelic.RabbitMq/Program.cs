@@ -14,7 +14,7 @@ namespace S203.NewRelic.RabbitMq
             try
             {
                 var runner = new Runner();
-                runner.Add(new EsbAgentFactory());
+                runner.Add(new RabbitAgentFactory());
                 runner.SetupAndRun();
             }
             catch (Exception e)
