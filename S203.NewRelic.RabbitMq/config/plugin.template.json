@@ -1,0 +1,11 @@
+﻿{
+  "agents": [
+    {
+      "_comment": "This is an example of how you would monitor a Neuron ESB instance. Duplicate this section if you have multiple servers.",
+      "name": "localhost",
+      "host": "localhost",
+      "port": 51002,
+      "instance": "DEFAULT"
+    }
+  ]
+}
