@@ -1,5 +1,7 @@
 ## RabbitMQ Plugin for New Relic
 
+[![Join the chat at https://gitter.im/203sol/newrelic-rabbitmq-plugin](https://badges.gitter.im/203sol/newrelic-rabbitmq-plugin.svg)](https://gitter.im/203sol/newrelic-rabbitmq-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build status](https://ci.appveyor.com/api/projects/status/j9r0spoh9w62jc9m?svg=true)](https://ci.appveyor.com/project/brentpabst/newrelic-neuronesb-plugin)
 [![Coverage Status](https://coveralls.io/repos/github/203sol/newrelic-neuronesb-plugin/badge.svg?branch=master)](https://coveralls.io/github/203sol/newrelic-neuronesb-plugin?branch=master)
 [![Stories in Backlog](https://badge.waffle.io/203sol/newrelic-neuronesb-plugin.svg?label=backlog&title=Backlog)](http://waffle.io/203sol/newrelic-neuronesb-plugin)
