@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using NewRelic.Platform.Sdk;
@@ -81,37 +82,37 @@ namespace S203.NewRelic.RabbitMq
 
             Logger.Debug("Sending Queue Summary Metrics to New Relic");
 
-            ReportMetric("Queues/Queued", "Messages", overview["queue_totals"]["messages"]?.Value<int>() ?? 0);
-            ReportMetric("Queues/Ready", "Messages", overview["queue_totals"]["messages_ready"]?.Value<int>() ?? 0);
-            ReportMetric("Queues/Unacknowledged", "Messages", overview["queue_totals"]["messages_unacknowledged"]?.Value<int>() ?? 0);
+            ReportMetric("Queues/Queued", "Messages", overview["queue_totals"]["messages"]?.Value<float>() ?? 0);
+            ReportMetric("Queues/Ready", "Messages", overview["queue_totals"]["messages_ready"]?.Value<float>() ?? 0);
+            ReportMetric("Queues/Unacknowledged", "Messages", overview["queue_totals"]["messages_unacknowledged"]?.Value<float>() ?? 0);
 
             Logger.Debug("Sending Object Summary Metrics to New Relic");
 
-            var objects = JsonConvert.DeserializeObject<Dictionary<string, int>>(overview["object_totals"].ToString());
+            var objects = JsonConvert.DeserializeObject<Dictionary<string, float>>(overview["object_totals"].ToString());
             foreach (var metric in objects)
             {
-                ReportMetric("Objects/" + metric.Key, metric.Key, metric.Value);
+                ReportMetric("Objects/" + UppercaseFirst(metric.Key), UppercaseFirst(metric.Key), metric.Value);
             }
 
             Logger.Debug("Sending Message Summary Metrics to New Relic");
 
             ReportMetric("Messages/Publish", "Messages/Second",
-                _messagesPublished.Process(overview["message_stats"]["publish"]?.Value<int>() ?? 0));
+                _messagesPublished.Process(overview["message_stats"]["publish"]?.Value<float>() ?? 0));
 
             ReportMetric("Messages/Ack", "Messages/Second",
-                _messagesAcked.Process(overview["message_stats"]["ack"]?.Value<int>() ?? 0));
+                _messagesAcked.Process(overview["message_stats"]["ack"]?.Value<float>() ?? 0));
 
             ReportMetric("Messages/Deliver", "Messages/Second",
-                _messagesDelivered.Process(overview["message_stats"]["deliver"]?.Value<int>() ?? 0));
+                _messagesDelivered.Process(overview["message_stats"]["deliver"]?.Value<float>() ?? 0));
 
             ReportMetric("Messages/Confirm", "Messages/Second",
-                _messagesConfirmed.Process(overview["message_stats"]["confirm"]?.Value<int>() ?? 0));
+                _messagesConfirmed.Process(overview["message_stats"]["confirm"]?.Value<float>() ?? 0));
 
             ReportMetric("Messages/Redeliver", "Messages/Second",
-                _messagesRedelivered.Process(overview["message_stats"]["redeliver"]?.Value<int>() ?? 0));
+                _messagesRedelivered.Process(overview["message_stats"]["redeliver"]?.Value<float>() ?? 0));
 
             ReportMetric("Messages/NoAck", "Messages/Second",
-                _messagesNoacked.Process(overview["message_stats"]["get_noack"]?.Value<int>() ?? 0));
+                _messagesNoacked.Process(overview["message_stats"]["get_noack"]?.Value<float>() ?? 0));
 
 
             // ------- Nodes ---------
@@ -128,12 +129,32 @@ namespace S203.NewRelic.RabbitMq
 
             Logger.Debug("Sending Node Metrics to New Relic");
 
-            ReportMetric("Node/DiskUsage/" + node["name"], "Bytes", node["disk_free"]?.Value<long>() ?? 0);
-            ReportMetric("Node/MemoryUsage/" + node["name"], "Percentage", node["mem_used"]?.Value<int>() ?? 0 / node["mem_limit"]?.Value<int>() ?? 0);
-            ReportMetric("Node/ProcUsage/" + node["name"], "Percentage", node["proc_used"]?.Value<int>() ?? 0 / node["proc_total"]?.Value<int>() ?? 0);
-            ReportMetric("Node/FileDescUsage/" + node["name"], "Percentage", node["fd_used"]?.Value<int>() ?? 0 / node["fd_total"]?.Value<int>() ?? 0);
-            ReportMetric("Node/SocketUsage/" + node["name"], "Percentage", node["sockets_used"]?.Value<int>() ?? 0 / node["sockets_total"]?.Value<int>() ?? 0);
+            var diskFree = node["disk_free"]?.Value<float>() ?? 0;
+            var memUsed = (node["mem_used"]?.Value<float>() ?? 0) / node["mem_limit"].Value<float>();
+            var procUsed = (node["proc_used"]?.Value<float>() ?? 0) / node["proc_total"].Value<float>();
+            var fdUsed = (node["fd_used"]?.Value<float>() ?? 0) / node["fd_total"].Value<float>();
+            var socketsUsed = (node["sockets_used"]?.Value<float>() ?? 0) / node["sockets_total"].Value<float>();
+
+            Logger.Debug("Disk Free Bytes: " + diskFree);
+            Logger.Debug("Memory Used %: " + memUsed);
+            Logger.Debug("Processor Used %: " + procUsed);
+            Logger.Debug("File Descriptors Used %: " + fdUsed);
+            Logger.Debug("Sockets Used %: " + socketsUsed);
+
+            ReportMetric("Node/DiskUsage/" + node["name"], "Bytes", diskFree);
+            ReportMetric("Node/MemoryUsage/" + node["name"], "Percentage", memUsed);
+            ReportMetric("Node/ProcUsage/" + node["name"], "Percentage", procUsed);
+            ReportMetric("Node/FileDescUsage/" + node["name"], "Percentage", fdUsed);
+            ReportMetric("Node/SocketUsage/" + node["name"], "Percentage", socketsUsed);
             ReportMetric("Node/Running/" + node["name"], "Running", node["running"]?.Value<bool>() ?? false ? 1 : 0);
+        }
+
+        private static string UppercaseFirst(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return string.Empty;
+
+            return char.ToUpper(s[0]) + s.Substring(1);
         }
     }
 }
