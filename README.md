@@ -9,6 +9,7 @@ Prerequisites
 -------------
 - A New Relic account. Signup for a free account at [http://newrelic.com](http://newrelic.com)
 - A server running Pivotal's RabbitMQ 3.5 or greater. Download the latest versions of RabbitMQ [here](http://www.rabbitmq.com/download.html).
+- The RabbitMQ Management Plugin.  You can find out how to enable that [here](https://www.rabbitmq.com/management.html).
 - .NET 3.5 on Windows Server.
 
 Installation
