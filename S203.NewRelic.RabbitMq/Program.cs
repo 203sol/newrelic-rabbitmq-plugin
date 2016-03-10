@@ -6,7 +6,7 @@ namespace S203.NewRelic.RabbitMq
 {
     internal class Program
     {
-        private static readonly Logger Logger = Logger.GetLogger("NeuronEsbLogger");
+        private static readonly Logger Logger = Logger.GetLogger("RabbitLogger");
 
         private static int Main(string[] args)
         {

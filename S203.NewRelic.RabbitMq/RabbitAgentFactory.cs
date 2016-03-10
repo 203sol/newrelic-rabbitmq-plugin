@@ -6,7 +6,7 @@ namespace S203.NewRelic.RabbitMq
 {
     public class RabbitAgentFactory : AgentFactory
     {
-        private static readonly Logger Logger = Logger.GetLogger("NeuronEsbLogger");
+        private static readonly Logger Logger = Logger.GetLogger("RabbitLogger");
 
         public override Agent CreateAgentWithConfiguration(IDictionary<string, object> properties)
         {
@@ -14,12 +14,11 @@ namespace S203.NewRelic.RabbitMq
 
             var name = (string)properties["name"];
             var host = (string)properties["host"];
-            var vhost = (string)properties["vhost"];
             var port = int.Parse(properties["port"].ToString());
             var username = (string)properties["username"];
             var password = (string)properties["password"];
 
-            return new RabbitAgent(name, host, vhost, port, username, password);
+            return new RabbitAgent(name, host, port, username, password);
         }
     }
 }
