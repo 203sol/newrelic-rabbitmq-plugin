@@ -123,30 +123,33 @@ namespace S203.NewRelic.RabbitMq
 
             Logger.Debug("Deserializing RabbitMQ Nodes");
 
-            var node = JArray.Parse(result)[0];
+            var nodes = JArray.Parse(result);
 
-            Logger.Debug("Response received:\n" + node);
+            Logger.Debug("Response received:\n" + nodes);
 
             Logger.Debug("Sending Node Metrics to New Relic");
 
-            var diskFree = node["disk_free"]?.Value<float>() ?? 0;
-            var memUsed = (node["mem_used"]?.Value<float>() ?? 0) / node["mem_limit"].Value<float>();
-            var procUsed = (node["proc_used"]?.Value<float>() ?? 0) / node["proc_total"].Value<float>();
-            var fdUsed = (node["fd_used"]?.Value<float>() ?? 0) / node["fd_total"].Value<float>();
-            var socketsUsed = (node["sockets_used"]?.Value<float>() ?? 0) / node["sockets_total"].Value<float>();
+            foreach (var node in nodes)
+            {
+                var diskFree = node["disk_free"]?.Value<float>() ?? 0;
+                var memUsed = (node["mem_used"]?.Value<float>() ?? 0) / node["mem_limit"].Value<float>();
+                var procUsed = (node["proc_used"]?.Value<float>() ?? 0) / node["proc_total"].Value<float>();
+                var fdUsed = (node["fd_used"]?.Value<float>() ?? 0) / node["fd_total"].Value<float>();
+                var socketsUsed = (node["sockets_used"]?.Value<float>() ?? 0) / node["sockets_total"].Value<float>();
 
-            Logger.Debug("Disk Free Bytes: " + diskFree);
-            Logger.Debug("Memory Used %: " + memUsed);
-            Logger.Debug("Processor Used %: " + procUsed);
-            Logger.Debug("File Descriptors Used %: " + fdUsed);
-            Logger.Debug("Sockets Used %: " + socketsUsed);
+                Logger.Debug("Disk Free Bytes: " + diskFree);
+                Logger.Debug("Memory Used %: " + memUsed);
+                Logger.Debug("Processor Used %: " + procUsed);
+                Logger.Debug("File Descriptors Used %: " + fdUsed);
+                Logger.Debug("Sockets Used %: " + socketsUsed);
 
-            ReportMetric("Node/DiskUsage/" + node["name"], "Bytes", diskFree);
-            ReportMetric("Node/MemoryUsage/" + node["name"], "Percentage", memUsed);
-            ReportMetric("Node/ProcUsage/" + node["name"], "Percentage", procUsed);
-            ReportMetric("Node/FileDescUsage/" + node["name"], "Percentage", fdUsed);
-            ReportMetric("Node/SocketUsage/" + node["name"], "Percentage", socketsUsed);
-            ReportMetric("Node/Running/" + node["name"], "Running", node["running"]?.Value<bool>() ?? false ? 1 : 0);
+                ReportMetric("Node/DiskUsage/" + node["name"], "Bytes", diskFree);
+                ReportMetric("Node/MemoryUsage/" + node["name"], "Percentage", memUsed);
+                ReportMetric("Node/ProcUsage/" + node["name"], "Percentage", procUsed);
+                ReportMetric("Node/FileDescUsage/" + node["name"], "Percentage", fdUsed);
+                ReportMetric("Node/SocketUsage/" + node["name"], "Percentage", socketsUsed);
+                ReportMetric("Node/Running/" + node["name"], "Running", node["running"]?.Value<bool>() ?? false ? 1 : 0);
+            }
         }
 
         private static string UppercaseFirst(string s)
