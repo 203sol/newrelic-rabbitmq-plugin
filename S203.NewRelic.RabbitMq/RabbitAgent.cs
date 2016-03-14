@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Reflection;
 using NewRelic.Platform.Sdk;
@@ -71,7 +70,7 @@ namespace S203.NewRelic.RabbitMq
 
             // ------- Overview ---------
 
-            Logger.Debug("Getting Overview");
+            Logger.Debug("Getting Overview Stats");
 
             var result = client.DownloadString(rabbitUri + "overview");
 
@@ -82,9 +81,9 @@ namespace S203.NewRelic.RabbitMq
 
             Logger.Debug("Sending Queue Summary Metrics to New Relic");
 
-            ReportMetric("Queues/Queued", "Messages", overview["queue_totals"]["messages"]?.Value<float>() ?? 0);
-            ReportMetric("Queues/Ready", "Messages", overview["queue_totals"]["messages_ready"]?.Value<float>() ?? 0);
-            ReportMetric("Queues/Unacknowledged", "Messages", overview["queue_totals"]["messages_unacknowledged"]?.Value<float>() ?? 0);
+            ReportMetric("Server/Queued", "Messages", overview["queue_totals"]["messages"]?.Value<float>() ?? 0);
+            ReportMetric("Server/Ready", "Messages", overview["queue_totals"]["messages_ready"]?.Value<float>() ?? 0);
+            ReportMetric("Server/NoAck", "Messages", overview["queue_totals"]["messages_unacknowledged"]?.Value<float>() ?? 0);
 
             Logger.Debug("Sending Object Summary Metrics to New Relic");
 
@@ -117,7 +116,7 @@ namespace S203.NewRelic.RabbitMq
 
             // ------- Nodes ---------
 
-            Logger.Debug("Getting Nodes");
+            Logger.Debug("Getting Node Stats");
 
             result = client.DownloadString(rabbitUri + "nodes");
 
@@ -149,6 +148,29 @@ namespace S203.NewRelic.RabbitMq
                 ReportMetric("Node/FileDescUsage/" + node["name"], "Percentage", fdUsed);
                 ReportMetric("Node/SocketUsage/" + node["name"], "Percentage", socketsUsed);
                 ReportMetric("Node/Running/" + node["name"], "Running", node["running"]?.Value<bool>() ?? false ? 1 : 0);
+            }
+
+            // -------- Queues ---------
+
+            Logger.Debug("Getting Queues");
+
+            result = client.DownloadString(rabbitUri + "queues");
+
+            Logger.Debug("Deserializing RabbitMQ Queues");
+
+            var queues = JArray.Parse(result);
+
+            Logger.Debug("Response received:\n" + nodes);
+
+            Logger.Debug("Sending Node Metrics to New Relic");
+
+            foreach (var queue in queues)
+            {
+                var vhost = queue["vhost"].Value<string>() == "/" ? "Root" : queue["vhost"];
+                ReportMetric($"Queues/{vhost}/{queue["name"]}/Messages/Total", "Messages", queue["messages"]?.Value<float>() ?? 0);
+                ReportMetric($"Queues/{vhost}/{queue["name"]}/Messages/Ready", "Messages", queue["messages_ready"]?.Value<float>() ?? 0);
+                ReportMetric($"Queues/{vhost}/{queue["name"]}/Messages/NoAck", "Messages", queue["messages_unacknowledged"]?.Value<float>() ?? 0);
+                ReportMetric($"Queues/{vhost}/{queue["name"]}/Consumers", "Consumers", queue["consumers"]?.Value<float>() ?? 0);
             }
         }
 
