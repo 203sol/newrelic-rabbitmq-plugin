@@ -15,10 +15,10 @@ namespace S203.NewRelic.RabbitMq
         private static readonly Logger Logger = Logger.GetLogger("RabbitLogger");
         private readonly Version _version = Assembly.GetExecutingAssembly().GetName().Version;
         private readonly string _name;
-        private static string _host;
-        private static int _port;
-        private static string _username;
-        private static string _password;
+        private string _host;
+        private int _port;
+        private string _username;
+        private string _password;
 
         private readonly IProcessor _messagesPublished;
         private readonly IProcessor _messagesAcked;
