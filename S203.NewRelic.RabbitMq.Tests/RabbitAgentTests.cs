@@ -11,7 +11,16 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new RabbitAgent(null, "", 0, "", "");
+                var agent = new RabbitAgent(null, "", "", 0, "", "");
+            });
+        }
+
+        [Test]
+        public void Ctor_Null_Argument_Scheme()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var agent = new RabbitAgent("name", null, "host", 0, "", "");
             });
         }
 
@@ -20,7 +29,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new RabbitAgent("name", null, 0, "", "");
+                var agent = new RabbitAgent("name", "scheme", null, 0, "", "");
             });
         }
 
@@ -29,7 +38,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new RabbitAgent("name", "host", 0, null, "");
+                var agent = new RabbitAgent("name", "scheme", "host", 0, null, "");
             });
         }
 
@@ -38,21 +47,21 @@ namespace S203.NewRelic.RabbitMq.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var agent = new RabbitAgent("name", "host", 0, "", null);
+                var agent = new RabbitAgent("name", "scheme", "host", 0, "", null);
             });
         }
 
         [Test]
         public void Ctor_Version()
         {
-            var agent = new RabbitAgent("name", "host", 0, "username", "password");
+            var agent = new RabbitAgent("name", "scheme", "host", 0, "username", "password");
             Assert.IsNotNull(agent.Version);
         }
 
         [Test]
         public void Ctor_Guid()
         {
-            var agent = new RabbitAgent("name", "host", 0, "username", "password");
+            var agent = new RabbitAgent("name", "scheme", "host", 0, "username", "password");
             Assert.IsNotNull(agent.Guid);
             Assert.IsTrue(agent.Guid == "com.203sol.newrelic.rabbitmq");
         }
@@ -60,7 +69,7 @@ namespace S203.NewRelic.RabbitMq.Tests
         [Test]
         public void Ctor_Name()
         {
-            var agent = new RabbitAgent("name", "host", 0, "username", "password");
+            var agent = new RabbitAgent("name", "scheme", "host", 0, "username", "password");
             Assert.IsNotNull(agent.GetAgentName());
             Assert.IsTrue(agent.GetAgentName() == "name");
         }

@@ -13,12 +13,13 @@ namespace S203.NewRelic.RabbitMq
             Logger.Info("Initializing Agent...");
 
             var name = (string)properties["name"];
+            var scheme = (string)properties["scheme"];
             var host = (string)properties["host"];
             var port = int.Parse(properties["port"].ToString());
             var username = (string)properties["username"];
             var password = (string)properties["password"];
 
-            return new RabbitAgent(name, host, port, username, password);
+            return new RabbitAgent(name, scheme, host, port, username, password);
         }
     }
 }
