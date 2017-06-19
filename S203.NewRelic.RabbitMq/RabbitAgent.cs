@@ -15,6 +15,7 @@ namespace S203.NewRelic.RabbitMq
         private static readonly Logger Logger = Logger.GetLogger("RabbitLogger");
         private readonly Version _version = Assembly.GetExecutingAssembly().GetName().Version;
         private readonly string _name;
+        private string _scheme;
         private string _host;
         private int _port;
         private string _username;
@@ -27,10 +28,12 @@ namespace S203.NewRelic.RabbitMq
         private readonly IProcessor _messagesRedelivered;
         private readonly IProcessor _messagesNoacked;
 
-        public RabbitAgent(string name, string host, int port, string username, string password)
+        public RabbitAgent(string name, string scheme, string host, int port, string username, string password)
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException(nameof(name), "Name must be specified for the agent to initialize");
+            if (string.IsNullOrEmpty(scheme))
+                throw new ArgumentNullException(nameof(scheme), "Scheme must be specified for the agent to initialize");
             if (string.IsNullOrEmpty(host))
                 throw new ArgumentNullException(nameof(host), "Host must be specified for the agent to initialize");
             if (string.IsNullOrEmpty(username))
@@ -41,6 +44,7 @@ namespace S203.NewRelic.RabbitMq
             _name = name;
             _host = host;
             _port = port;
+            _scheme = scheme;
             _username = username;
             _password = password;
 
@@ -64,7 +68,7 @@ namespace S203.NewRelic.RabbitMq
         public override void PollCycle()
         {
             // Prep the client
-            var rabbitUri = $"http://{_host}:{_port}/api/";
+            var rabbitUri = $"{_scheme}://{_host}:{_port}/api/";
             var client = new WebClient { Credentials = new NetworkCredential(_username, _password) };
             client.Headers.Add("content-Type", "Application/json");
 
